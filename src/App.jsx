@@ -1,11 +1,13 @@
-import "./App.css";
+import { BrowserRouter } from "react-router-dom";
+import MainRaoutes from "./routes";
 
-function App() {
+export default function App() {
   return (
-    <div>
-      <h1>Hello world</h1>
-    </div>
+    <BrowserRouter>
+    
+      <MainRaoutes />
+    </BrowserRouter>
   );
 }
 
-export default App;
+
