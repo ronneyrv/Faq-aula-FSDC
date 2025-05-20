@@ -1,5 +1,5 @@
 export default function Faq() {
     return(
-        <h1>Pagina FAQ</h1>
+        <h1>Novo FAQ</h1>
     )
 }
