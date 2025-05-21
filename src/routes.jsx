@@ -8,7 +8,7 @@ export default function MainRaoutes() {
         <Routes>
             <Route path="/" element={<Home/>} />
             <Route path="/novo-faq" element={<Faq/>} />
-            <Route path="/edit-faq" element={<Edit/>} />
+            <Route path="/edit-faq/:id" element={<Edit />} />
         </Routes>
     )
 }

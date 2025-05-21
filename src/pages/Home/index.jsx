@@ -4,15 +4,27 @@ import {
   Stack,
   Typography,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
+  Button,
 } from "@mui/material";
 import Ask from "../../components/Asks";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [faqs, setFaqs] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedFaqId, setSelectedFaqId] = useState(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const itemsPerPage = 5;
+  const navigate = useNavigate();
 
   useEffect(() => {
     let url = "http://admin.pedabete.app.br/api/faq";
@@ -25,9 +37,31 @@ export default function Home() {
       })
       .catch(() => setLoading(false));
   }, []);
+
   const handleChange = (event, value) => {
     setPage(value);
   };
+
+  const handleDoubleClick = (id) => {
+    setSelectedFaqId(id);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setUsername("");
+    setPassword("");
+  };
+
+  const handleLogin = () => {
+    if (username === "admin" && password === "123") {
+      navigate(`edit-faq/${selectedFaqId}`);
+    } else {
+      alert("Login ou senha incorretos.");
+    }
+    handleCloseDialog();
+  };
+
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentItems = faqs.slice(startIndex, endIndex);
@@ -59,7 +93,7 @@ export default function Home() {
       ) : (
         <Stack spacing={2}>
           {currentItems.map((item) => (
-            <div key={item.id}>
+            <div key={item.id} onDoubleClick={() => handleDoubleClick(item.id)}>
               <Ask question={item.question} answer={item.answer} />
             </div>
           ))}
@@ -74,6 +108,34 @@ export default function Home() {
           </Box>
         </Stack>
       )}
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Autenticação</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Usuário"
+            fullWidth
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Senha"
+            type="password"
+            fullWidth
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancelar</Button>
+          <Button onClick={handleLogin} variant="contained">
+            Entrar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

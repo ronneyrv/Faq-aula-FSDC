@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 
 const pages = [
   { page: "adicionar", path: "novo-faq" },
-  { page: "Editar", path: "edit-faq" },
+  //{ page: "Editar", path: "edit-faq" },
 ];
 
 export default function Header() {
