@@ -1,17 +1,29 @@
-import { Box, Pagination, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Pagination,
+  Stack,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import Ask from "../../components/Asks";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const [faqs, setFaqs] = useState([]);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const itemsPerPage = 5;
 
   useEffect(() => {
     let url = "http://admin.pedabete.app.br/api/faq";
+    setLoading(true);
     fetch(url)
       .then((res) => res.json())
-      .then((dados) => setFaqs(dados));
+      .then((dados) => {
+        setFaqs(dados);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
   const handleChange = (event, value) => {
     setPage(value);
@@ -40,22 +52,28 @@ export default function Home() {
       >
         Lista de Perguntas Frequentes (FAQ)
       </Typography>
-      <Stack spacing={2}>
-        {currentItems.map((item) => (
-          <div key={item.id}>
-            <Ask question={item.question} answer={item.answer} />
-          </div>
-        ))}
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={handleChange}
-            shape="rounded"
-            color="primary"
-          />
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 5, mb: 5 }}>
+          <CircularProgress />
         </Box>
-      </Stack>
+      ) : (
+        <Stack spacing={2}>
+          {currentItems.map((item) => (
+            <div key={item.id}>
+              <Ask question={item.question} answer={item.answer} />
+            </div>
+          ))}
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={handleChange}
+              shape="rounded"
+              color="primary"
+            />
+          </Box>
+        </Stack>
+      )}
     </Box>
   );
 }
