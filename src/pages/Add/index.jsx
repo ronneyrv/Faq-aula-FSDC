@@ -7,9 +7,11 @@ import {
   Button,
   CircularProgress,
   Alert,
+  DialogActions,
 } from "@mui/material";
 
-export default function Faq() {
+export default function Add() {
+  const [author, setAuthor] = useState("");
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,19 +19,32 @@ export default function Faq() {
   const [error, setError] = useState(false);
   const navigate = useNavigate();
 
+  const handleCancel = () => {
+    setAuthor("");
+    setQuestion("");
+    setAnswer("");
+    navigate("/");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const creatDate = new Date().toISOString();
     setLoading(true);
     setSuccess(false);
     setError(false);
 
     try {
-      const response = await fetch("http://admin.pedabete.app.br/api/faq", {
+      const response = await fetch("http://localhost:3001/faq", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ question, answer }),
+        body: JSON.stringify({
+          author,
+          question,
+          answer,
+          questionCreatedAt: creatDate,
+        }),
       });
 
       if (response.ok) {
@@ -72,6 +87,14 @@ export default function Faq() {
 
       <form onSubmit={handleSubmit}>
         <TextField
+          label="Autor"
+          fullWidth
+          margin="normal"
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+          required
+        />
+        <TextField
           label="Pergunta"
           fullWidth
           margin="normal"
@@ -100,8 +123,8 @@ export default function Faq() {
             Ocorreu um erro ao enviar. Tente novamente.
           </Alert>
         )}
-
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+        <DialogActions sx={{ padding: 0, marginTop: 2 }}>
+          <Button onClick={handleCancel}>Cancelar</Button>
           <Button
             type="submit"
             variant="contained"
@@ -110,7 +133,7 @@ export default function Faq() {
           >
             {loading ? <CircularProgress size={24} /> : "Adicionar FAQ"}
           </Button>
-        </Box>
+        </DialogActions>
       </form>
     </Box>
   );

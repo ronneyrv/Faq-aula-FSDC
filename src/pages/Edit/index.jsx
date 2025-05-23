@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -5,9 +7,8 @@ import {
   Typography,
   CircularProgress,
   Alert,
+  DialogActions,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 
 export default function Edit() {
   const { id } = useParams();
@@ -15,19 +16,21 @@ export default function Edit() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
 
+  const handleCancel = () => {
+    setQuestion("");
+    setAnswer("");
+    navigate("/");
+  };
+
   useEffect(() => {
-    fetch(`http://admin.pedabete.app.br/api/faq`)
+    fetch(`http://localhost:3001/faq/${id}`)
       .then((res) => res.json())
       .then((data) => {
-        const item = data.find(
-          (el) => el.id === "0bb5338e-ad50-4088-8621-d30d62ff959c"
-        );
-        setQuestion(item.question);
-        setAnswer(item.answer);
+        setQuestion(data.question);
+        setAnswer(data.answer);
         setLoading(false);
       })
       .catch(() => {
@@ -38,14 +41,14 @@ export default function Edit() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSaving(true);
+    setLoading(true);
 
-    fetch(`http://admin.pedabete.app.br/api/faq`, {
-      //   method: "PUT",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({ question, answer }),
+    fetch(`http://localhost:3001/faq/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ question, answer }),
     })
       .then((res) => {
         if (res.ok) {
@@ -58,7 +61,7 @@ export default function Edit() {
         }
       })
       .catch(() => setError(true))
-      .finally(() => setSaving(false));
+      .finally(() => setLoading(false));
   };
 
   if (loading) {
@@ -112,15 +115,17 @@ export default function Edit() {
             Erro ao salvar.
           </Alert>
         )}
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          disabled={saving}
-          sx={{ mt: 2 }}
-        >
-          {saving ? "Salvando..." : "Salvar"}
-        </Button>
+        <DialogActions sx={{ padding: 0, marginTop: 2 }}>
+          <Button onClick={handleCancel}>Cancelar</Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} /> : "Salvar FAQ"}
+          </Button>
+        </DialogActions>
       </form>
     </Box>
   );

@@ -1,13 +1,49 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import EditSquareIcon from "@mui/icons-material/EditSquare";
+import {
+  Box,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
+  Button,
+} from "@mui/material";
 
-export default function Ask({ question, answer }) {
+export default function Ask({ question, answer, id }) {
+  const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [selectedFaqId, setSelectedFaqId] = React.useState(null);
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  const handleEdit = (id) => {
+    setOpenDialog(true);
+    setSelectedFaqId(id);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setUsername("");
+    setPassword("");
+  };
+
+  const handleLogin = () => {
+    if (username === "admin" && password === "123") {
+      navigate(`edit-faq/${selectedFaqId}`);
+    } else {
+      alert("Login ou senha incorretos.");
+    }
+    handleCloseDialog();
+  };
   return (
-    <div>
+    <Box>
       <Accordion>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -16,8 +52,55 @@ export default function Ask({ question, answer }) {
         >
           <Typography component="span">{question}</Typography>
         </AccordionSummary>
-        <AccordionDetails>{answer}</AccordionDetails>
+        <AccordionDetails>
+          <Box sx={{ position: "relative", minHeight: 50 }}>
+            <Typography>{answer}</Typography>
+
+            <EditSquareIcon
+              onClick={() => handleEdit(id)}
+              sx={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                cursor: "pointer",
+                color: "primary.main",
+              }}
+            />
+          </Box>
+        </AccordionDetails>
       </Accordion>
-    </div>
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <Box sx={{ padding: 2 }}>
+          <DialogTitle>Autenticação</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Usuário"
+              fullWidth
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <TextField
+              margin="dense"
+              label="Senha"
+              type="password"
+              fullWidth
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </DialogContent>
+          <Box sx={{ padding: 2 }}>
+            <DialogActions>
+              <Button onClick={handleCloseDialog}>Cancelar</Button>
+              <Button onClick={handleLogin} variant="contained">
+                Entrar
+              </Button>
+            </DialogActions>
+          </Box>
+        </Box>
+      </Dialog>
+    </Box>
   );
 }
