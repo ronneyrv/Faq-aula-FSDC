@@ -14,6 +14,7 @@ import {
   TextField,
   DialogActions,
   Button,
+  Tooltip,
 } from "@mui/material";
 
 export default function Ask({ question, answer, id }) {
@@ -42,6 +43,7 @@ export default function Ask({ question, answer, id }) {
     }
     handleCloseDialog();
   };
+
   return (
     <Box>
       <Accordion>
@@ -55,17 +57,18 @@ export default function Ask({ question, answer, id }) {
         <AccordionDetails>
           <Box sx={{ position: "relative", minHeight: 50 }}>
             <Typography>{answer}</Typography>
-
-            <EditSquareIcon
-              onClick={() => handleEdit(id)}
-              sx={{
-                position: "absolute",
-                bottom: 0,
-                right: 0,
-                cursor: "pointer",
-                color: "primary.main",
-              }}
-            />
+            <Tooltip title="Editar ou Deletar FAQ">
+              <EditSquareIcon
+                onClick={() => handleEdit(id)}
+                sx={{
+                  position: "absolute",
+                  bottom: 0,
+                  right: 0,
+                  cursor: "pointer",
+                  color: "primary.main",
+                }}
+              />
+            </Tooltip>
           </Box>
         </AccordionDetails>
       </Accordion>

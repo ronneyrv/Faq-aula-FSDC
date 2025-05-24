@@ -8,6 +8,7 @@ import {
   Stack,
   Typography,
   CircularProgress,
+  Tooltip,
 } from "@mui/material";
 
 export default function Home() {
@@ -56,15 +57,18 @@ export default function Home() {
         sx={{ fontWeight: "bold", textAlign: "center" }}
       >
         Lista de Perguntas Frequentes (FAQ)
-        <AddToPhotosIcon
-          sx={{
-            marginLeft: 10,
-            fontSize: 35,
-            cursor: "pointer",
-            color: "primary.main",
-          }}
-          onClick={() => navigate(`add-faq`)}
-        />
+        <Tooltip title="Adcionar nova FAQ">
+          <AddToPhotosIcon
+            sx={{
+              marginLeft: 10,
+              fontSize: 35,
+              cursor: "pointer",
+              color: "primary.main",
+              display: { xs: "none", md: "inline-flex" },
+            }}
+            onClick={() => navigate(`add-faq`)}
+          />
+        </Tooltip>
       </Typography>
 
       {loading ? (
